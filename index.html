@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="lt">
+<head>
+  <meta charset="UTF-8" />
+  <title>Atspėk skaičių</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f8ff;
+      text-align: center;
+      padding: 50px;
+    }
+
+    input[type="number"] {
+      padding: 10px;
+      font-size: 16px;
+      width: 80px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      margin: 10px;
+    }
+
+    .message {
+      font-size: 20px;
+      margin-top: 20px;
+    }
+
+    .celebrate {
+      animation: pop 0.5s ease-out 3;
+    }
+
+    @keyframes pop {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.2); color: green; }
+      100% { transform: scale(1); }
+    }
+  </style>
+</head>
+<body>
+  <h1>Atspėk skaičių (1–100)</h1>
+  <p>Įvesk skaičių ir paspausk „Spėti“</p>
+
+  <input type="number" id="guess" min="1" max="100" />
+  <button onclick="checkGuess()">Spėti</button>
+  <button onclick="restartGame()">Perkrauti žaidimą</button>
+
+  <div class="message" id="message"></div>
+
+  <!-- Garsai -->
+  <audio id="win-sound" src="https://www.soundjay.com/buttons/sounds/button-10.mp3" preload="auto"></audio>
+  <audio id="fail-sound" src="https://www.soundjay.com/buttons/sounds/button-16.mp3" preload="auto"></audio>
+
+  <script>
+    let secretNumber = Math.floor(Math.random() * 100) + 1;
+    let attempts = 0;
+
+    function checkGuess() {
+      const guessInput = document.getElementById('guess');
+      const message = document.getElementById('message');
+      const winSound = document.getElementById('win-sound');
+      const failSound = document.getElementById('fail-sound');
+      const guess = Number(guessInput.value);
+      attempts++;
+
+      if (!guess || guess < 1 || guess > 100) {
+        message.textContent = 'Įvesk skaičių nuo 1 iki 100!';
+        failSound.play();
+        return;
+      }
+
+      if (guess === secretNumber) {
+        message.textContent = `🎉 Teisingai! Skaičius buvo ${secretNumber}. Bandymų: ${attempts}`;
+        message.classList.add('celebrate');
+        guessInput.disabled = true;
+        winSound.play();
+      } else if (guess < secretNumber) {
+        message.textContent = '🔽 Per mažas!';
+        failSound.play();
+      } else {
+        message.textContent = '🔼 Per didelis!';
+        failSound.play();
+      }
+    }
+
+    function restartGame() {
+      secretNumber = Math.floor(Math.random() * 100) + 1;
+      attempts = 0;
+      document.getElementById('guess').value = '';
+      document.getElementById('guess').disabled = false;
+      const message = document.getElementById('message');
+      message.textContent = '';
+      message.classList.remove('celebrate');
+    }
+  </script>
+</body>
+</html>
